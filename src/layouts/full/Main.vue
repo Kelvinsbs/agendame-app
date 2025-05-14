@@ -25,22 +25,20 @@ const sDrawer = ref(true);
         <!---Navigation -->
         <!-- ---------------------------------------------- -->
         <div>
-        <perfect-scrollbar class="scrollnavbar">
-            <v-list class="pa-6">
-                <!---Menu Loop -->
-                <template v-for="(item, i) in sidebarMenu">
-                    <!---Item Sub Header -->
-                    <NavGroup :item="item" v-if="item.header" :key="item.title" />
+          <v-list class="pa-6">
+              <!---Menu Loop -->
+              <template v-for="(item, i) in sidebarMenu">
+                  <!---Item Sub Header -->
+                  <NavGroup :item="item" v-if="item.header" :key="item.title" />
 
-                    <!---Single Item-->
-                    <NavItem :item="item" v-else class="leftPadding" />
-                    <!---End Single Item-->
-                </template>
-            </v-list>
-            <div class="pa-4">
-                <ExtraBox />
-            </div>
-        </perfect-scrollbar>
+                  <!---Single Item-->
+                  <NavItem :item="item" v-else class="leftPadding" />
+                  <!---End Single Item-->
+              </template>
+          </v-list>
+          <div class="pa-4">
+              <ExtraBox />
+          </div>
     </div>
 
     </v-navigation-drawer>
