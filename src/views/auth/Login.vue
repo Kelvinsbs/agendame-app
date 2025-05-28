@@ -2,6 +2,10 @@
 import Logo from '@/layouts/full/logo/Logo.vue';
 /* Login form */
 import LoginForm from '@/components/auth/LoginForm.vue';
+
+import axios from 'axios';
+axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
+axios.get('http://localhost:8000/sanctum/csrf-cookie')
 </script>
 <template>
     <div class="authentication">
