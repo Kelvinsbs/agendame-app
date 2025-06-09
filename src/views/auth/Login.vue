@@ -5,7 +5,11 @@ import LoginForm from '@/components/auth/LoginForm.vue';
 
 import axios from 'axios';
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
+axios.defaults.withXSRFToken = true; // Enable CSRF protection
 axios.get('http://localhost:8000/sanctum/csrf-cookie')
+.then(() => {
+    axios.post('http://localhost:8000/api/login')
+})
 </script>
 <template>
     <div class="authentication">
