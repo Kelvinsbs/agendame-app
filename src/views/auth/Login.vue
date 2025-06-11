@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true; // Enable cookies for cross-origin reques
 axios.defaults.withXSRFToken = true; // Enable CSRF protection
 axios.get('http://localhost:8000/sanctum/csrf-cookie')
 .then(() => {
-    axios.post('http://localhost:8000/api/login')
+    axios.post('http://localhost:8000/api/login', {email: 'test@example.com', password: 'password'})
 })
 </script>
 <template>
