@@ -3,13 +3,14 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 
+
 const schema = {
   email (value) {
-    if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/.test(value)) {
-      return true;
-    }
-    return 'This field must be a valid email';
-  },
+      if (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i.test(value)) {
+        return true;
+      }
+      return 'This field must be a valid email';
+    },
   password (value) {
     if (value) {
       return true;
@@ -18,12 +19,12 @@ const schema = {
   }
 };
 
-const { handleSubmit, errors } = useForm( {
+const { handleSubmit, errors, isSubmitting} = useForm( {
   validationSchema: schema
 });
 
-const submit = handleSubmit( (values) => {
-  console.log('Form submitted with values:', values);
+const submit = handleSubmit(async (values) => {
+  await login(values);
 });
 
 const {value: email} = useField('email');
@@ -33,20 +34,16 @@ axios.defaults.withCredentials = true; // Enable cookies for cross-origin reques
 axios.defaults.withXSRFToken = true; // Enable CSRF protection
 
 const feedbackMessage = ref('');
-const loading = ref(false);
 
-function login() {
-  loading.value = true;
+function login(values) {
   feedbackMessage.value = '';
   axios.get('http://localhost:8000/sanctum/csrf-cookie')
     .then(() => {
       axios.post('http://localhost:8000/api/login', {
-        email: email.value,
-        password: password.value
+        email: values.email,
+        password: values.password
       }).catch(() => {
         feedbackMessage.value = 'Seu e-mail ou senha estão inválidos.';
-      }).finally(() => {
-        loading.value = false;
       })
     })
 }
@@ -54,7 +51,7 @@ function login() {
 
 <template>
   <v-alert v-if="feedbackMessage" color="error" class="mb-2">{{ feedbackMessage }}</v-alert>
-  <v-form @submit.prevent="login">
+  <v-form @submit.prevent="submit">
     <v-row class="d-flex mb-3">
       <v-col cols="12">
         <v-label class="font-weight-bold mb-1">E-mail</v-label>
@@ -75,7 +72,7 @@ function login() {
         </div>
       </v-col>
       <v-col cols="12" class="pt-0">
-        <v-btn type="submit" :loading="loading" color="primary" size="large" block flat>Entrar</v-btn>
+        <v-btn type="submit" :loading="isSubmitting" color="primary" size="large" block flat>Entrar</v-btn>
       </v-col>
     </v-row>
   </v-form>
