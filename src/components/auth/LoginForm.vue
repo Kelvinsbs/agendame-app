@@ -1,23 +1,15 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
+import { object, string } from 'yup';
 
 
-const schema = {
-  email (value) {
-      if (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i.test(value)) {
-        return true;
-      }
-      return 'This field must be a valid email';
-    },
-  password (value) {
-    if (value) {
-      return true;
-    }
-    return 'Password is required';
-  }
-};
+const schema = object({
+  email: string().required().email().label('E-mail'),
+  password: string().required().label('Senha')
+});
 
 const { handleSubmit, errors, isSubmitting} = useForm( {
   validationSchema: schema
@@ -35,6 +27,8 @@ axios.defaults.withXSRFToken = true; // Enable CSRF protection
 
 const feedbackMessage = ref('');
 
+const router = useRouter();
+
 function login(values) {
   feedbackMessage.value = '';
   axios.get('http://localhost:8000/sanctum/csrf-cookie')
@@ -42,6 +36,8 @@ function login(values) {
       axios.post('http://localhost:8000/api/login', {
         email: values.email,
         password: values.password
+      }).then(() => {
+        router.push({ name: 'dashboard'});
       }).catch(() => {
         feedbackMessage.value = 'Seu e-mail ou senha estão inválidos.';
       })
