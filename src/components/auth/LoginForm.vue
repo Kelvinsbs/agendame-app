@@ -22,8 +22,6 @@ const submit = handleSubmit(async (values) => {
 const {value: email} = useField('email');
 const {value: password} = useField('password');
 
-axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
-axios.defaults.withXSRFToken = true; // Enable CSRF protection
 
 const feedbackMessage = ref('');
 
@@ -31,9 +29,9 @@ const router = useRouter();
 
 function login(values) {
   feedbackMessage.value = '';
-  axios.get('http://localhost:8000/sanctum/csrf-cookie')
+  axios.get('sanctum/csrf-cookie')
     .then(() => {
-      axios.post('http://localhost:8000/api/login', {
+      axios.post('api/login', {
         email: values.email,
         password: values.password
       }).then(() => {
