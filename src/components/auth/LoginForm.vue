@@ -1,22 +1,39 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+import { useForm, useField } from 'vee-validate';
+
+const schema = {
+  email (value) {
+    if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/.test(value)) {
+      return true;
+    }
+    return 'This field must be a valid email';
+  },
+  password (value) {
+    if (value) {
+      return true;
+    }
+    return 'Password is required';
+  }
+};
+
+const { handleSubmit, errors } = useForm( {
+  validationSchema: schema
+});
+
+const submit = handleSubmit( (values) => {
+  console.log('Form submitted with values:', values);
+});
+
+const {value: email} = useField('email');
+const {value: password} = useField('password');
 
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
 axios.defaults.withXSRFToken = true; // Enable CSRF protection
 
-const email = ref('');
-const password = ref('');
 const feedbackMessage = ref('');
 const loading = ref(false);
-
-const rules = {
-  required: value => !!value || 'Required.',
-  email: value => {
-    const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return pattern.test(value) || 'Invalid e-mail.'
-  },
-}
 
 function login() {
   loading.value = true;
@@ -41,12 +58,12 @@ function login() {
     <v-row class="d-flex mb-3">
       <v-col cols="12">
         <v-label class="font-weight-bold mb-1">E-mail</v-label>
-        <v-text-field v-model="email" :rules="[rules.required, rules.email]" variant="outlined"
+        <v-text-field v-model="email" :error-messages="errors.email" variant="outlined"
           color="primary"></v-text-field>
       </v-col>
       <v-col cols="12">
         <v-label class="font-weight-bold mb-1">Senha</v-label>
-        <v-text-field v-model="password" :rules="[rules.required]" variant="outlined" type="password"
+        <v-text-field v-model="password" :error-messages="errors.password" variant="outlined" type="password"
           color="primary"></v-text-field>
       </v-col>
       <v-col cols="12" class="pt-0">
