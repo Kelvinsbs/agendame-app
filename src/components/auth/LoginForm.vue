@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { object, string } from 'yup';
+import { useAuthStore } from '@/stores/auth';
 
 
 const schema = object({
@@ -25,16 +26,17 @@ const {value: password} = useField('password');
 
 const feedbackMessage = ref('');
 
+const authStore = useAuthStore();
+
 const router = useRouter();
 
 function login(values) {
   feedbackMessage.value = '';
-  axios.get('sanctum/csrf-cookie')
+
+  authStore.sanctum()
     .then(() => {
-      axios.post('api/login', {
-        email: values.email,
-        password: values.password
-      }).then(() => {
+      authStore.login(values.email, values.password)
+      .then(() => {
         router.push({ name: 'dashboard'});
       }).catch(() => {
         feedbackMessage.value = 'Seu e-mail ou senha estão inválidos.';
