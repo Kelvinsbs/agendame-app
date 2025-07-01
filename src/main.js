@@ -6,10 +6,17 @@ import '@/scss/style.scss'; // @ é um alias para src
 import './plugins/yup';
 import './plugins/axios';
 import pinia from './plugins/pinia';
+import { useMeStore } from './stores/me';
 
 const app = createApp(App)
-app
-  .use(router)
-  .use(pinia)
-  .use(vuetify)
-  .mount('#app')
+app.use(pinia)
+
+const meStore = useMeStore();
+
+meStore.getMe()
+  .finally(() => { // .finally -> vai trazer independente do sucesso ou falha
+    app
+      .use(router)
+      .use(vuetify)
+      .mount('#app')
+  })
