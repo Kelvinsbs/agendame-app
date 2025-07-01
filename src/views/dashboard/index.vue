@@ -1,14 +1,14 @@
 <script setup>
-  import { useAuthStore } from '@/stores/auth';
-  const authStore = useAuthStore();
+  import { useMeStore } from '@/stores/me';
+  const meStore = useMeStore();
 
 </script>
 <template>
   <div>
     Dashboard
     <br><br>
-    <pre>{{ authStore.user }}</pre>
+    <pre>{{ meStore.user }}</pre>
     <br>
-    Ta logado ai? {{ authStore.isLoggedIn }}
+    Ta logado ai? {{ meStore.isLoggedIn }}
   </div>
 </template>
