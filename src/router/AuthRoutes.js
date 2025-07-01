@@ -1,17 +1,10 @@
-import { useMeStore } from '@/stores/me';
+import { redirectIfAuthenticated } from './guards';
 
 export default [
   {
     path: '/login',
     component: () => import('@/layouts/blank/BlankLayout.vue'),
-    beforeEnter: (to, from, next) => {
-      const meStore = useMeStore();
-      if (meStore.isLoggedIn) {
-        next({name: 'dashboard'});
-      } else {
-        next();
-      }
-    },
+    beforeEnter: redirectIfAuthenticated,
     children: [
       {
         name: 'login',
