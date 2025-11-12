@@ -1,7 +1,27 @@
 <script setup>
 import Logo from '@/layouts/full/logo/Logo.vue';
-/* Login form */
-import LoginForm from '@/components/auth/LoginForm.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRoute } from 'vue-router';
+
+const authStore = useAuthStore();
+const route = useRoute();
+const token = route.query.token;
+const loading = ref(true)
+const status = ref(null)
+const feedbackMessage = ref(null)
+
+authStore.verifyEmail(token)
+.then(() => {
+  status.value = 'success'
+  feedbackMessage.value = 'E-mail verificado com sucesso!'
+})
+.catch(() => {
+  status.value = 'error'
+  feedbackMessage.value = 'Erro ao verificar o E-mail!'
+})
+.finally(() => {
+  loading.value = false
+})
 </script>
 <template>
     <div class="authentication">
@@ -15,17 +35,12 @@ import LoginForm from '@/components/auth/LoginForm.vue';
                             </div>
 
                             <v-alert
-                              color="error"
+                              :color="status"
                               class="mb-2">
-                              Error
-                            </v-alert>
-                            <v-alert
-                              color="success"
-                              class="mb-2">
-                              Success
+                              {{ feedbackMessage }}
                             </v-alert>
 
-                            <div class="text-center">
+                            <div class="text-center" v-if="loading">
                               <v-progress-circular
                                 indeterminate
                                 color="primary"></v-progress-circular>
